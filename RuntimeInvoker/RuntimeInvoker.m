@@ -44,7 +44,9 @@ typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
     RIMethodArgumentTypeCGRect,
     RIMethodArgumentTypeUIEdgeInsets,
     RIMethodArgumentTypeObject,
-    RIMethodArgumentTypeClass
+    RIMethodArgumentTypeClass,
+    RIMethodArgumentTypeSEL,
+    RIMethodArgumentTypeIMP,
 };
 
 @implementation NSMethodSignature (RuntimeInvoker)
@@ -109,6 +111,10 @@ typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
         return RIMethodArgumentTypeCGRect;
     } else if (strcmp(encode, @encode(UIEdgeInsets)) == 0) {
         return RIMethodArgumentTypeUIEdgeInsets;
+    } else if (strcmp(encode, @encode(SEL)) == 0) {
+        return RIMethodArgumentTypeSEL;
+    }  else if (strcmp(encode, @encode(IMP))) {
+        return RIMethodArgumentTypeIMP;
     } else {
         return RIMethodArgumentTypeUnknown;
     }
@@ -210,6 +216,14 @@ typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
             case RIMethodArgumentTypeClass: {
                 Class value = [argument class];
                 [invocation setArgument:&value atIndex:index];
+            } break;
+            case RIMethodArgumentTypeIMP: {
+                IMP imp = [argument pointerValue];
+                [invocation setArgument:&imp atIndex:index];
+            } break;
+            case RIMethodArgumentTypeSEL: {
+                SEL sel = [argument pointerValue];
+                [invocation setArgument:&sel atIndex:index];
             } break;
                 
             default: break;
@@ -342,6 +356,16 @@ typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
             UIEdgeInsets value;
             [self getReturnValue:&value];
             returnValue = [NSValue valueWithUIEdgeInsets:value];
+        } break;
+        case RIMethodArgumentTypeSEL: {
+            SEL sel;
+            [self getReturnValue:&sel];
+            returnValue = [NSValue valueWithPointer:sel];
+        } break;
+        case RIMethodArgumentTypeIMP: {
+            IMP imp;
+            [self getReturnValue:&imp];
+            returnValue = [NSValue valueWithPointer:imp];
         } break;
         case RIMethodArgumentTypeObject:
         case RIMethodArgumentTypeClass:
