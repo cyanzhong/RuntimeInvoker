@@ -244,7 +244,7 @@ typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
 /**
  *  Boxing returnType of NSMethodSignature
  *
- *  @param signature Signature
+ *  @param type Signature
  *
  *  @return Boxed value
  */
