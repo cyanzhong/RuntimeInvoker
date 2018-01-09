@@ -67,7 +67,7 @@
 }
 
 - (void)exampleVariableParameter {
-    _items = @[].mutableCopy;//[self.view valueForKey:@"_UIRemoteView"]
+    _items = @[].mutableCopy;
     ExampleItem *item0 = [[ExampleItem alloc] initWithTarget:self action:@selector(actionTest)];
     ExampleItem *item1 = [[ExampleItem alloc] initWithTarget:self action:@selector(actionTestWithArg1:)];
     ExampleItem *item2 = [[ExampleItem alloc] initWithTarget:self action:@selector(actionTestWithArg1:arg2:)];
