@@ -9,7 +9,17 @@
 #import "ViewController.h"
 #import "RuntimeInvoker.h"
 
-@implementation ViewController
+@interface ExampleItem : NSObject
+
+@property (nonatomic, assign, readonly) SEL actionSelector;
+@property (nonatomic, weak, readonly) id actionTarget;
+- (instancetype)initWithTarget:(id)target action:(SEL)actionSelector;
+
+@end
+
+@implementation ViewController {
+    NSMutableArray<ExampleItem *> *_items;
+}
 
 - (CGRect)aRect {
     return CGRectMake(0, 0, 100, 100);
@@ -52,6 +62,74 @@
     UIColor *color = [UIColor invoke:@"colorWithRed:green:blue:alpha:"
                                 args:@(0), @(0.5), @(1), nil];
     NSLog(@"color: %@", color);
+    
+    [self exampleVariableParameter];
+}
+
+- (void)exampleVariableParameter {
+    _items = @[].mutableCopy;//[self.view valueForKey:@"_UIRemoteView"]
+    ExampleItem *item0 = [[ExampleItem alloc] initWithTarget:self action:@selector(actionTest)];
+    ExampleItem *item1 = [[ExampleItem alloc] initWithTarget:self action:@selector(actionTestWithArg1:)];
+    ExampleItem *item2 = [[ExampleItem alloc] initWithTarget:self action:@selector(actionTestWithArg1:arg2:)];
+    ExampleItem *item3 = [[ExampleItem alloc] initWithTarget:self action:@selector(actionTestWithArg1:arg2:arg3:)];
+     ExampleItem *item4 = [[ExampleItem alloc] initWithTarget:self action:@selector(actionTestWithArg1:arg2:arg3:arg4:)];
+    ExampleItem *item5 = [[ExampleItem alloc] initWithTarget:self action:@selector(actionTestWithArg1:arg2:arg3:arg4:arg5:)];
+    [_items addObject:item0];
+    [_items addObject:item1];
+    [_items addObject:item2];
+    [_items addObject:item3];
+    [_items addObject:item4];
+    [_items addObject:item5];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [_items enumerateObjectsUsingBlock:^(ExampleItem * _Nonnull item, NSUInteger idx, BOOL * _Nonnull stop) {
+            [item.actionTarget invoke:NSStringFromSelector(item.actionSelector) args:@"model", self, nil, @"hello", nil];
+        }];
+    });
+}
+
+- (void)actionTest {
+    
+}
+
+- (void)actionTestWithArg1:(id)arg1 {
+    
+}
+
+- (void)actionTestWithArg1:(id)arg1 arg2:(id)arg2 {
+    
+}
+
+- (void)actionTestWithArg1:(id)arg1 arg2:(id)arg2 arg3:(id)arg3 {
+    
+}
+
+- (void)actionTestWithArg1:(id)arg1 arg2:(id)arg2 arg3:(id)arg3 arg4:(id)arg4 {
+    
+}
+
+- (void)actionTestWithArg1:(id)arg1 arg2:(id)arg2 arg3:(id)arg3 arg4:(id)arg4 arg5:(id)arg5 {
+    
+}
+
+
+
+@end
+
+@implementation ExampleItem
+{
+    SEL _actionSelector;
+    __weak id _actionTarget;
+}
+
+@synthesize actionSelector = _actionSelector, actionTarget = _actionTarget;
+
+- (instancetype)initWithTarget:(id)target action:(SEL)actionSelector {
+    if (self = [super init]) {
+        _actionTarget = target;
+        _actionSelector = actionSelector;
+    }
+    return self;
 }
 
 @end
