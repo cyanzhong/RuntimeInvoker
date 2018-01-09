@@ -112,7 +112,7 @@
 				TargetAttributes = {
 					87E828731CF81B5E008E25AF = {
 						CreatedOnToolsVersion = 7.2.1;
-						DevelopmentTeam = 69R9Y4CDGR;
+						DevelopmentTeam = NKW67GFDHM;
 					};
 				};
 			};
@@ -262,7 +262,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 69R9Y4CDGR;
+				DEVELOPMENT_TEAM = NKW67GFDHM;
 				INFOPLIST_FILE = RuntimeInvoker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = lib.cyan.RuntimeInvoker;
@@ -274,7 +274,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 69R9Y4CDGR;
+				DEVELOPMENT_TEAM = NKW67GFDHM;
 				INFOPLIST_FILE = RuntimeInvoker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = lib.cyan.RuntimeInvoker;
