@@ -10,14 +10,18 @@
 #import <UIKit/UIKit.h>
 
 #define _DEFINE_ARRAY(arg) \
-NSMutableArray *array = [NSMutableArray arrayWithObject:arg];\
-va_list args;\
-va_start(args, arg);\
-id next = nil;\
-while ((next = va_arg(args,id))) {\
-    [array addObject:next];\
-}\
-va_end(args);\
+    NSMutableArray *array = nil;\
+    if (arg) {\
+        array = [NSMutableArray arrayWithObject:arg];\
+        va_list args;\
+        va_start(args, arg);\
+        id next = nil;\
+        while ((next = va_arg(args,id))) {\
+            [array addObject:next];\
+        }\
+        va_end(args);\
+    }\
+
 
 #pragma mark - NSMethodSignature Category
 
@@ -386,6 +390,13 @@ id _invoke(id target, NSString *selector, NSArray *arguments) {
     SEL sel = NSSelectorFromString(selector);
     NSMethodSignature *signature = [target methodSignatureForSelector:sel];
     if (signature) {
+        // Get the number of parameters required in selector
+        NSInteger argumentsCount = [selector length] - [[selector stringByReplacingOccurrencesOfString:@":" withString:@""] length];
+        if (arguments.count > argumentsCount) {
+            // Remove the redundant parameters from arguments. When I execute the classification invoke:arguments:, no matter how many parameters, I only keep the valid parameter part with selector.
+            arguments = [arguments objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, arguments.count-(arguments.count-argumentsCount))]];
+        }
+        
         NSInvocation *invocation = [signature invocationWithArguments:arguments];
         id returnValue = [invocation invoke:target selector:sel returnType:signature.returnType];
         return returnValue;
