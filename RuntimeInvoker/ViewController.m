@@ -17,10 +17,6 @@
 
 @implementation Father
 
-+ (NSString *)classSample:(NSString *)content {
-    return [NSString stringWithFormat:@"%@ From Father Class", content];
-}
-
 - (NSString *)instanceSample:(NSString *)content {
     return [NSString stringWithFormat:@"%@ From Father Instance", content];
 }
@@ -32,10 +28,6 @@
 @end
 
 @implementation Child
-
-+ (NSString *)classSample:(NSString *)content {
-    return [NSString stringWithFormat:@"%@ From Child Class", content];
-}
 
 - (NSString *)instanceSample:(NSString *)content {
     return [NSString stringWithFormat:@"%@ From Child Instance", content];
@@ -91,7 +83,6 @@
     
     // test super
     Child *child = [Child new];
-    NSLog(@"super class test: %@", [child.class invokeSuper:@"classSample:" arguments:@[@"haha"]]);
     NSLog(@"super instance test: %@", [child invokeSuper:@"instanceSample:" arguments:@[@"haha"]]);
 }
 
