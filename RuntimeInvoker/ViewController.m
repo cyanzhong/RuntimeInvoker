@@ -9,6 +9,42 @@
 #import "ViewController.h"
 #import "RuntimeInvoker.h"
 
+#pragma mark - Super Test Helper
+
+@interface Father : NSObject
+
+@end
+
+@implementation Father
+
++ (NSString *)classSample:(NSString *)content {
+    return [NSString stringWithFormat:@"%@ From Father Class", content];
+}
+
+- (NSString *)instanceSample:(NSString *)content {
+    return [NSString stringWithFormat:@"%@ From Father Instance", content];
+}
+
+@end
+
+@interface Child : Father
+
+@end
+
+@implementation Child
+
++ (NSString *)classSample:(NSString *)content {
+    return [NSString stringWithFormat:@"%@ From Child Class", content];
+}
+
+- (NSString *)instanceSample:(NSString *)content {
+    return [NSString stringWithFormat:@"%@ From Child Instance", content];
+}
+
+@end
+
+/**********/
+
 @implementation ViewController
 
 - (CGRect)aRect {
@@ -52,6 +88,11 @@
     UIColor *color = [UIColor invoke:@"colorWithRed:green:blue:alpha:"
                                 args:@(0), @(0.5), @(1), nil];
     NSLog(@"color: %@", color);
+    
+    // test super
+    Child *child = [Child new];
+    NSLog(@"super class test: %@", [child.class invokeSuper:@"classSample:" arguments:@[@"haha"]]);
+    NSLog(@"super instance test: %@", [child invokeSuper:@"instanceSample:" arguments:@[@"haha"]]);
 }
 
 @end

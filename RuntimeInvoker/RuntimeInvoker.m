@@ -8,6 +8,7 @@
 
 #import "RuntimeInvoker.h"
 #import <UIKit/UIKit.h>
+#import <objc/message.h>
 
 #define _DEFINE_ARRAY(arg) \
 NSMutableArray *array = [NSMutableArray arrayWithObject:arg];\
@@ -382,7 +383,18 @@ typedef NS_ENUM(NSInteger, RIMethodArgumentType) {
 
 @implementation NSObject (RuntimeInvoker)
 
-id _invoke(id target, NSString *selector, NSArray *arguments) {
+id _invoke(id target, NSString *selector, NSArray *arguments, Class classForSuperCall) {
+    if (classForSuperCall) {
+        NSString *superSelectorName = [NSString stringWithFormat:@"SUPER_%@", selector];
+        SEL superSelector = NSSelectorFromString(superSelectorName);
+        if (!class_respondsToSelector(classForSuperCall, superSelector)) {
+            Class superClass = [classForSuperCall superclass];
+            Method superMethod = class_getInstanceMethod(superClass, NSSelectorFromString(selector));
+            IMP superIMP = method_getImplementation(superMethod);
+            class_addMethod(classForSuperCall, superSelector, superIMP, method_getTypeEncoding(superMethod));
+        }
+        selector = superSelectorName;
+    }
     SEL sel = NSSelectorFromString(selector);
     NSMethodSignature *signature = [target methodSignatureForSelector:sel];
     if (signature) {
@@ -396,7 +408,7 @@ id _invoke(id target, NSString *selector, NSArray *arguments) {
 }
 
 - (id)invoke:(NSString *)selector arguments:(NSArray *)arguments {
-    return _invoke(self, selector, arguments);
+    return _invoke(self, selector, arguments, nil);
 }
 
 - (id)invoke:(NSString *)selector {
@@ -406,6 +418,10 @@ id _invoke(id target, NSString *selector, NSArray *arguments) {
 - (id)invoke:(NSString *)selector args:(id)arg, ... {
     _DEFINE_ARRAY(arg);
     return [self invoke:selector arguments:array];
+}
+
+- (id)invokeSuper:(NSString *)selector arguments:(NSArray *)arguments {
+    return _invoke(self, selector, arguments, self.class);
 }
 
 + (id)invoke:(NSString *)selector {
@@ -418,7 +434,12 @@ id _invoke(id target, NSString *selector, NSArray *arguments) {
 }
 
 + (id)invoke:(NSString *)selector arguments:(NSArray *)arguments {
-    return _invoke(self.class, selector, arguments);
+    return _invoke(self.class, selector, arguments, nil);
+}
+
++ (id)invokeSuper:(NSString *)selector arguments:(NSArray *)arguments {
+    Class clazz = objc_getMetaClass(class_getName(self.class));
+    return _invoke(self.class, selector, arguments, clazz);
 }
 
 @end
