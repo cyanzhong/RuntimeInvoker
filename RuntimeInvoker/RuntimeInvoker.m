@@ -8,6 +8,7 @@
 
 #import "RuntimeInvoker.h"
 #import <UIKit/UIKit.h>
+#import <objc/message.h>
 
 #define _DEFINE_ARRAY(arg) \
 NSMutableArray *array = [NSMutableArray arrayWithObject:arg];\
@@ -406,6 +407,19 @@ id _invoke(id target, NSString *selector, NSArray *arguments) {
 - (id)invoke:(NSString *)selector args:(id)arg, ... {
     _DEFINE_ARRAY(arg);
     return [self invoke:selector arguments:array];
+}
+
+- (id)invokeSuper:(NSString *)selector arguments:(NSArray *)arguments {
+    NSString *superSelectorName = [NSString stringWithFormat:@"SUPER_%@", selector];
+    SEL superSelector = NSSelectorFromString(superSelectorName);
+    Class classForSuperCall = self.class;
+    if (!class_respondsToSelector(classForSuperCall, superSelector)) {
+        Class superClass = [classForSuperCall superclass];
+        Method superMethod = class_getInstanceMethod(superClass, NSSelectorFromString(selector));
+        IMP superIMP = method_getImplementation(superMethod);
+        class_addMethod(classForSuperCall, superSelector, superIMP, method_getTypeEncoding(superMethod));
+    }
+    return _invoke(self, superSelectorName, arguments);
 }
 
 + (id)invoke:(NSString *)selector {

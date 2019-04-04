@@ -40,6 +40,16 @@
 - (id)invoke:(NSString *)selector arguments:(NSArray *)arguments;
 
 /**
+ *  Invoke a selector from super with name and args
+ *
+ *  @param selector  Selector name
+ *  @param arguments Arguments list
+ *
+ *  @return Return value
+ */
+- (id)invokeSuper:(NSString *)selector arguments:(NSArray *)arguments;
+
+/**
  *  Invoke a selector with name (Class Method)
  *
  *  @param selector Selector name
